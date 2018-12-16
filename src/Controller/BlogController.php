@@ -29,11 +29,16 @@ class BlogController extends BaseController
     ];
 
     /**
-     * @Route("/", name="blog_list")
+     * @Route("/{page}", name="blog_list", defaults={"page": 1}, requirements={"id" = "\d+"})
      */
-    public function list()
+    public function list($page)
     {
-        return new JsonResponse(self::POSTS);
+        return new JsonResponse(
+            [
+                "page" => $page,
+                "posts" => self::POSTS
+            ]
+        );
     }
 
     /**
