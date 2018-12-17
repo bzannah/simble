@@ -1,4 +1,4 @@
-# rush+
+# Symfony Starter
 
 
  What's next?
