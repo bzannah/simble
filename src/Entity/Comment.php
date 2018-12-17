@@ -28,6 +28,12 @@ class Comment
      */
     private $published;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comments")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $author;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -53,6 +59,24 @@ class Comment
     public function setPublished(\DateTimeInterface $published): self
     {
         $this->published = $published;
+
+        return $this;
+    }
+
+    /**
+     * @return User
+     */
+    public function getAuthor(): User
+    {
+        return $this->author;
+    }
+
+    /**
+     * @param User $author
+     */
+    public function setAuthor($author): self
+    {
+        $this->author = $author;
 
         return $this;
     }

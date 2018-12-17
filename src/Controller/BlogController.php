@@ -37,13 +37,6 @@ class BlogController extends BaseController
     /**
      * @Route("/post/{id}", name="blog_post_by_id", requirements={"id" = "\d+"}, methods={"GET"})
      */
-//    public function post($id)
-//    {
-//        // array_search returns the index of the found element
-//        return $this->json(
-//           $this->getDoctrine()->getRepository(BlogPost::class)->find($id)
-//        );
-//    }
     public function post(BlogPost $post)
     {
         // automatically gets the post by id - You can explicitly use the param converter like so:

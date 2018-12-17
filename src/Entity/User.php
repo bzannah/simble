@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -37,6 +38,25 @@ class User
      * @ORM\Column(type="string", length=255)
      */
     private $email;
+
+    /** @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\BlogPost", mappedBy="author")
+     *
+     */
+    private $posts;
+
+    /** @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="author")
+     */
+    private $comments;
+
+    public function __construct()
+    {
+        $this->posts = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -89,5 +109,21 @@ class User
         $this->email = $email;
 
         return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getPosts(): ArrayCollection
+    {
+        return $this->posts;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getComments(): ArrayCollection
+    {
+        return $this->comments;
     }
 }
