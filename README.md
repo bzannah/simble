@@ -1,10 +1,10 @@
-# Symfony Starter
+# Simble
 
 
  What's next?
 
 
-  * Run your application:
+  * Run the application:
     1. Change to the project directory
     2. Create your code repository with the git init command
     3. Run composer require server --dev to install the development web server,

@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
-use Doctrine\DBAL\Types\DateTimeType;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\BlogPostRepository")
+ * @ApiResource()
  */
 class BlogPost
 {
