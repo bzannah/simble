@@ -3,8 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\BlogPost;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Serializer;
 
@@ -37,22 +37,32 @@ class BlogController extends BaseController
     /**
      * @Route("/post/{id}", name="blog_post_by_id", requirements={"id" = "\d+"}, methods={"GET"})
      */
-    public function post($id)
+//    public function post($id)
+//    {
+//        // array_search returns the index of the found element
+//        return $this->json(
+//           $this->getDoctrine()->getRepository(BlogPost::class)->find($id)
+//        );
+//    }
+    public function post(BlogPost $post)
     {
+        // automatically gets the post by id - You can explicitly use the param converter like so:
+        // @ParamConverter("post", class="App:BlogPost", option={"mapping": {"id": "id"}})
         // array_search returns the index of the found element
         return $this->json(
-           $this->getDoctrine()->getRepository(BlogPost::class)->find($id)
+            $post
         );
     }
+
 
     /**
      * @Route("/post/{slug}", name="blog_post_by_slug", methods={"GET"})
      */
-    public function postBySlug($slug)
+    public function postBySlug(BlogPost $post)
     {
         // array_search returns the index of the found element
         return $this->json(
-            $this->getDoctrine()->getRepository(BlogPost::class)->findBy(['slug' => $slug])
+            $post
         );
     }
 
@@ -72,5 +82,21 @@ class BlogController extends BaseController
         $em->flush();
 
         return $this->json($blogPost, 200, [], ["success" => true]);
+    }
+
+    /**
+     * @Route("/post/delete/{id}", name="blog_post_by_id", requirements={"id" = "\d+"}, methods={"DELETE"})
+     */
+    public function delete(BlogPost $post)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $em->remove($post);
+        $em->flush();
+
+        return $this->json(
+            'deleted',
+            Response::HTTP_NO_CONTENT
+        );
     }
 }
