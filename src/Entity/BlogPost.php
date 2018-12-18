@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -34,6 +36,8 @@ class BlogPost
     private $content;
 
     /**
+     * @var User
+     *
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="posts")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -43,6 +47,16 @@ class BlogPost
      * @ORM\Column(type="string", length=255)
      */
     private $slug;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="blogPost")
+     */
+    private $comments;
+
+    public function __construct()
+    {
+        $this->comments = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -100,7 +114,7 @@ class BlogPost
     /**
      * @return User
      */
-    public function getAuthor() : User
+    public function getAuthor(): User
     {
         return $this->author;
     }
@@ -113,5 +127,13 @@ class BlogPost
         $this->author = $author;
 
         return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
     }
 }

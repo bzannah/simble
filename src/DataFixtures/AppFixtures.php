@@ -3,40 +3,49 @@
 namespace App\DataFixtures;
 
 use App\Entity\BlogPost;
+use App\Entity\Comment;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoder;
+use Faker\Factory;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AppFixtures extends Fixture
 {
     /**
-     * @var UserPasswordEncoder
+     * @var UserPasswordEncoderInterface
      */
     private $passwordEncoder;
+    /**
+     * @var Factory
+     */
+    private $faker;
 
-    public function __construct(UserPasswordEncoder $passwordEncoder)
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
     {
         $this->passwordEncoder = $passwordEncoder;
+        $this->faker = Factory::create();
     }
 
     public function load(ObjectManager $manager)
     {
         $this->loadUsers($manager);
         $this->loadBlogPosts($manager);
+        $this->loadComments($manager);
     }
 
     public function loadBlogPosts(ObjectManager $manager)
     {
-        for ($i = 1; $i <=10; $i++) {
+        for ($i = 1; $i <=100; $i++) {
             /** @var User $user */
             $user = $this->getReference('user_admin_'.random_int(1, 10));
             $blog = new BlogPost();
-            $blog->setTitle("In the Dark " . $i)
-                ->setPublished(new \DateTime("2018-12-31 23:59:59"))
-                ->setContent("Boring through the hall number " . $i)
+            $blog->setTitle($this->faker->realText(20))
+                ->setPublished($this->faker->dateTime)
+                ->setContent($this->faker->realText())
                 ->setAuthor($user)
-                ->setSlug("in-the-dark-".$i);
+                ->setSlug($this->faker->slug);
+            $this->addReference('blog_post_'.$i, $blog);
             $manager->persist($blog);
         }
 
@@ -45,21 +54,43 @@ class AppFixtures extends Fixture
 
     public function loadComments(ObjectManager $manager)
     {
-
+        for ($i = 1; $i <=100; $i++) {
+            /** @var User $user */
+            $user = $this->getReference('user_admin_'.random_int(1, 10));
+            $this->createCommentPerUser($user, $manager);
+        }
     }
 
     public function loadUsers(ObjectManager $manager)
     {
         for ($i = 1; $i <=10; $i++) {
             $user = new User();
-            $user->setUsername('admin'.$i)
-                ->setEmail('admin@example.com')
-                ->setName('Foo Bar')
+            $username = $i == 1 ? 'foo' : $this->faker->userName;
+            $email = $i == 1 ? 'admin@example.com' : $this->faker->email;
+            $user->setUsername($username)
+                ->setEmail($email)
+                ->setName($this->faker->name)
                 ->setPassword($this->passwordEncoder->encodePassword($user, 'foo'));
             $this->addReference('user_admin_'.$i, $user);
             $manager->persist($user);
         }
+        $manager->flush();
+    }
 
+    private function createCommentPerUser(User $user, ObjectManager $manager)
+    {
+        $limit = random_int(1, 5);
+        for ($i = 1; $i <= $limit; $i++) {
+            $rand = random_int(1, 100);
+            /** @var BlogPost $blogPost */
+            $blogPost = $this->getReference('blog_post_'.$rand);
+            $comment = new Comment();
+            $comment->setContent($this->faker->realText())
+                ->setPublished($this->faker->dateTimeThisMonth)
+                ->setAuthor($user)
+                ->setBlogPost($blogPost);
+            $manager->persist($comment);
+        }
         $manager->flush();
     }
 }
