@@ -33,6 +33,10 @@ class User implements UserInterface
      * @Groups({"read"})
      * @Assert\NotBlank()
      * @Assert\Length(min=4, max=255)
+     * @Assert\Regex(
+     *     pattern="/(?=.*[A-Z]).(?=.*[a-z]).(?=.*[0-9]).{7,}/",
+     *     message="Password must be at least 7 characters, at least 1 digit, at least 1 upper case, at least 1 lower case and at least 1 symbol"
+     * )
      */
     private $username;
 
