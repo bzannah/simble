@@ -1,29 +1,42 @@
 # Simble
 
 
- What's next?
+*To run the code:* 
 
+Run `composer install`
 
-  * Run the application:
-    1. Change to the project directory
-    2. Create your code repository with the git init command
-    3. Run composer require server --dev to install the development web server,
-       or configure another supported web server https://symfony.com/doc/current/setup/web_server_configuration.html
+**Configure the the .env File**
 
-  * Read the documentation at https://symfony.com/doc
+First, make sure you have an `.env` file (you should).
+If you don't, copy `.env.dist` to create it.
 
+Next, look at the configuration and make any adjustments you
+need - specifically `DATABASE_URL`.
 
- Database Configuration
+**Setup the Database**
 
+Again, make sure `.env` is setup for your computer. Then, create
+the database & tables!
 
-  * Modify your DATABASE_URL config in .env
+```
+php bin/console doctrine:database:create
+php bin/console doctrine:migrations:migrate
+php bin/console doctrine:fixtures:load
+```
 
-  * Configure the driver (mysql) and
-    server_version (5.7) in config/packages/doctrine.yaml
+If you get an error that the database exists, that should
+be ok. But if you have problems, completely drop the
+database (`doctrine:database:drop --force`) and try again.
 
+**Start the built-in web server**
 
- How to test?
+You can use Nginx or Apache, but the built-in web server works
+great:
 
+```
+php bin/console server:run
+```
 
-  * Write test cases in the tests/ folder
-  * Run php bin/phpunit
+Now check out the site at `http://localhost:8000`
+
+__Have fun!__
