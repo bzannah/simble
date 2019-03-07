@@ -65,6 +65,9 @@ class BlogController extends BaseController
     public function addBlog(Request $request)
     {
         /** @var Serializer $serializer */
+
+        // Serialize means from object to array to json also known as (encode/normalise)
+        // De-Serialize means from json to array to object (encoding/denormalisation)
         $serializer = $this->get('serializer');
 
         $blogPost = $serializer->deserialize($request->getContent(), BlogPost::class, 'json');
