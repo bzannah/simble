@@ -33,10 +33,6 @@ class User implements UserInterface
      * @Groups({"read"})
      * @Assert\NotBlank()
      * @Assert\Length(min=4, max=255)
-     * @Assert\Regex(
-     *     pattern="/(?=.*[A-Z]).(?=.*[a-z]).(?=.*[0-9]).{7,}/",
-     *     message="Password must be at least 7 characters, at least 1 digit, at least 1 upper case, at least 1 lower case and at least 1 symbol"
-     * )
      */
     private $username;
 
@@ -44,8 +40,21 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank()
      * @Assert\Length(min=6, max=255)
+     * @Assert\Regex(
+     *     pattern="/(?=.*[A-Z]).(?=.*[a-z]).(?=.*[0-9]).{7,}/",
+     *     message="Password must be at least 7 characters, at least 1 digit, at least 1 upper case, at least 1 lower case and at least 1 symbol"
+     * )
      */
     private $password;
+
+    /**
+     * @Assert\NotBlank()
+     * @Assert\Expression(
+     *     "this.getPassword() === this.getRetypedPassword()",
+     *     message="Passwords does not match"
+     * )
+     */
+    private $retypedPassword;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -110,6 +119,16 @@ class User implements UserInterface
         $this->password = $password;
 
         return $this;
+    }
+
+    public function getRetypedPassword()
+    {
+        return $this->retypedPassword;
+    }
+
+    public function setRetypedPassword($retypedPassword): void
+    {
+        $this->retypedPassword = $retypedPassword;
     }
 
     public function getName(): ?string
