@@ -13,9 +13,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
- *     itemOperations={"get"= {"access_control" = "is_granted('IS_AUTHENTICATED_FULLY')"}},
- *     collectionOperations={"post"},
- *     normalizationContext={"groups"={"read"}}
+ *     itemOperations={"get" = {"access_control" = "is_granted('IS_AUTHENTICATED_FULLY')",
+ *                              "normalization_context"={"groups"={"get"}}
+ *                     },
+ *                     "put" = {"access_control" = "is_granted('IS_AUTHENTICATED_FULLY') and object == user",
+ *                              "denormalization_context"={"groups"={"put"}}
+ *                     }},
+ *     collectionOperations={"post" = {"denormalization_context"={"groups"={"put"}}}}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity(fields={"username", "email"})
@@ -26,13 +30,13 @@ class User implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"read"})
+     * @Groups({"get"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read"})
+     * @Groups({"get", "post"})
      * @Assert\NotBlank()
      * @Assert\Length(min=4, max=255)
      */
@@ -40,6 +44,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"put", "post"})
      * @Assert\NotBlank()
      * @Assert\Length(min=6, max=255)
      * @Assert\Regex(
@@ -51,6 +56,7 @@ class User implements UserInterface
 
     /**
      * @Assert\NotBlank()
+     * @Groups({"put", "post"})
      * @Assert\Expression(
      *     "this.getPassword() === this.getRetypedPassword()",
      *     message="Passwords does not match"
@@ -60,13 +66,13 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read"})
+     * @Groups({"get", "post", "put"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read"})
+     * @Groups({"post", "put", "get"})
      * @Assert\NotBlank()
      */
     private $email;
@@ -75,7 +81,7 @@ class User implements UserInterface
      * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="App\Entity\BlogPost", mappedBy="author")
-     * @Groups({"read"})
+     * @Groups({"get"})
      *
      */
     private $posts;
@@ -84,7 +90,7 @@ class User implements UserInterface
      * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="author")
-     * @Groups({"read"})
+     * @Groups({"get"})
      */
     private $comments;
 
