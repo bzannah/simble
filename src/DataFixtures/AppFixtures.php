@@ -38,7 +38,7 @@ class AppFixtures extends Fixture
     {
         for ($i = 1; $i <=100; $i++) {
             /** @var User $user */
-            $user = $this->getReference('user_admin_'.random_int(1, 10));
+            $user = $this->getRandomUser();
             $blog = new BlogPost();
             $blog->setTitle($this->faker->realText(20))
                 ->setPublished($this->faker->dateTime)
@@ -56,7 +56,7 @@ class AppFixtures extends Fixture
     {
         for ($i = 1; $i <=100; $i++) {
             /** @var User $user */
-            $user = $this->getReference('user_admin_'.random_int(1, 10));
+            $user = $this->getRandomUser();
             $this->createCommentPerUser($user, $manager);
         }
     }
@@ -70,8 +70,8 @@ class AppFixtures extends Fixture
             $user->setUsername($username)
                 ->setEmail($email)
                 ->setName($this->faker->name)
-                ->setPassword($this->passwordEncoder->encodePassword($user, 'foo'));
-            $this->addReference('user_admin_'.$i, $user);
+                ->setPassword($this->passwordEncoder->encodePassword($user, 'Foobar123#'));
+            $this->addReference('user_'.$i, $user);
             $manager->persist($user);
         }
         $manager->flush();
@@ -92,5 +92,13 @@ class AppFixtures extends Fixture
             $manager->persist($comment);
         }
         $manager->flush();
+    }
+
+    /**
+     * @return User|object
+     */
+    private function getRandomUser() : User
+    {
+        return $this->getReference('user_'.random_int(1, 10));
     }
 }
